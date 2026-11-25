@@ -15,7 +15,6 @@ import android.provider.MediaStore
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import com.visionit.vcut.model.AspectRatioOption
-import com.visionit.vcut.model.AudioSettings
 import com.visionit.vcut.model.EditorProjectState
 import com.visionit.vcut.model.ExportResolution
 import com.visionit.vcut.model.TextOverlayItem
@@ -60,8 +59,8 @@ class VideoExportEngine(private val context: Context) {
             durationSec = 0.0
         )
 
-        val afFlag = if (audioFilter.isNotBlank()) "-af "$audioFilter"" else ""
-        val cmd = "-y -i "${inputFile.absolutePath}" -vn $afFlag -c:a aac -b:a 192k "${outFile.absolutePath}""
+        val afFlag = if (audioFilter.isNotBlank()) "-af \"$audioFilter\"" else ""
+        val cmd = "-y -i \"${inputFile.absolutePath}\" -vn $afFlag -c:a aac -b:a 192k \"${outFile.absolutePath}\""
 
         val success = runFFmpegCommand(cmd, totalDurationMs = 1L) {}
         inputFile.delete()
@@ -104,7 +103,7 @@ class VideoExportEngine(private val context: Context) {
             return@withContext ExportResult(true, "কোনো অডিও ফিল্টার চালু নেই।", inputAudioPath)
         }
 
-        val cmd = "-y -i "${src.absolutePath}" -af "$chain" -c:a aac -b:a 192k "${outFile.absolutePath}""
+        val cmd = "-y -i \"${src.absolutePath}\" -af \"$chain\" -c:a aac -b:a 192k \"${outFile.absolutePath}\""
         val ok = runFFmpegCommand(cmd, 1L) {}
         if (ok && outFile.exists() && outFile.length() > 0L) {
             ExportResult(true, "ভয়েস এনহ্যান্স ও নয়েজ রিমুভ সম্পন্ন!", outFile.absolutePath)
@@ -165,25 +164,25 @@ class VideoExportEngine(private val context: Context) {
             var nextInputIdx = 0
 
             val clipInputIndices = localClips.map { (_, file) ->
-                inputs.append("-i "${file.absolutePath}" ")
+                inputs.append("-i \"${file.absolutePath}\" ")
                 nextInputIdx++
             }
             val textInputIndices = textPngFiles.map { (_, png) ->
-                inputs.append("-i "${png.absolutePath}" ")
+                inputs.append("-i \"${png.absolutePath}\" ")
                 nextInputIdx++
             }
             val pipInputIdx = if (imageOverlayFile != null) {
-                inputs.append("-i "${imageOverlayFile.absolutePath}" ")
+                inputs.append("-i \"${imageOverlayFile.absolutePath}\" ")
                 nextInputIdx++
             } else -1
 
             val musicInputIdx = if (musicFile != null) {
-                inputs.append("-i "${musicFile.absolutePath}" ")
+                inputs.append("-i \"${musicFile.absolutePath}\" ")
                 nextInputIdx++
             } else -1
 
             val voiceInputIdx = if (voiceoverFile != null) {
-                inputs.append("-i "${voiceoverFile.absolutePath}" ")
+                inputs.append("-i \"${voiceoverFile.absolutePath}\" ")
                 nextInputIdx++
             } else -1
 
@@ -325,19 +324,19 @@ class VideoExportEngine(private val context: Context) {
 
             val finalAudioMap = when (mixStreams.size) {
                 0 -> ""
-                1 -> "-map "${mixStreams.first()}" -c:a aac -b:a 192k"
+                1 -> "-map \"${mixStreams.first()}\" -c:a aac -b:a 192k"
                 else -> {
                     fc.append("${mixStreams.joinToString("")}amix=inputs=${mixStreams.size}:duration=first:dropout_transition=2[afinal];")
-                    "-map "[afinal]" -c:a aac -b:a 192k"
+                    "-map \"[afinal]\" -c:a aac -b:a 192k"
                 }
             }
 
             val filterGraph = fc.toString().trimEnd(';')
             val outputFile = File(workDir, "VisionCut_Export.mp4")
 
-            val cmd = "$inputs -filter_complex "$filterGraph" -map "$currentV" $finalAudioMap " +
+            val cmd = "$inputs -filter_complex \"$filterGraph\" -map \"$currentV\" $finalAudioMap " +
                 "-c:v libx264 -preset ultrafast -crf 21 -pix_fmt yuv420p -movflags +faststart " +
-                "-y "${outputFile.absolutePath}""
+                "-y \"${outputFile.absolutePath}\""
 
             val ok = runFFmpegCommand(cmd, totalDurationMs, onProgress)
             if (ok && outputFile.exists() && outputFile.length() > 0L) {
@@ -462,7 +461,7 @@ class VideoExportEngine(private val context: Context) {
                     cont.resume(ok)
                 }
             },
-            {},
+            { _ -> },
             { stats ->
                 if (totalDurationMs > 0 && stats.time > 0) {
                     val p = (stats.time.toFloat() / totalDurationMs.toFloat()).coerceIn(0f, 0.99f)
