@@ -1,0 +1,5 @@
+-keep class com.arthenica.ffmpegkit.** { *; }
+-dontwarn com.arthenica.ffmpegkit.**
+-keep class com.visionit.vcut.model.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
