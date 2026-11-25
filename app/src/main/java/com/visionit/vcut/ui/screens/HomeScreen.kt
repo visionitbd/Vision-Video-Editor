@@ -53,7 +53,7 @@ fun HomeScreen(
             HomeToolItem("Filters & LUTs", Icons.Outlined.FilterVintage, EditorTab.FILTERS),
             HomeToolItem("Voice Record", Icons.Outlined.Mic, EditorTab.AUDIO),
             HomeToolItem("Enhance Voice", Icons.Outlined.GraphicEq, EditorTab.AUDIO),
-            HomeToolItem("Noise Remove", Icons.Outlined.NoiseAware, EditorTab.AUDIO),
+            HomeToolItem("Noise Remove", Icons.Outlined.CleaningServices, EditorTab.AUDIO),
             HomeToolItem("Extract Audio", Icons.Outlined.AudioFile, EditorTab.AUDIO),
             HomeToolItem("Text & Captions", Icons.Outlined.ClosedCaption, EditorTab.TEXT),
             HomeToolItem("Overlay PIP", Icons.Outlined.Layers, EditorTab.OVERLAY)
