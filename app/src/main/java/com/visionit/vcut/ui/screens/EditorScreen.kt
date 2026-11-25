@@ -1,3 +1,4 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 package com.visionit.vcut.ui.screens
 
 import android.graphics.Bitmap
@@ -806,7 +807,7 @@ private fun AudioToolPanel(
             selected = audio.noiseReductionEnabled,
             onClick = { onUpdateAudio { it.copy(noiseReductionEnabled = !it.noiseReductionEnabled) } },
             label = { Text("Noise Remove", fontSize = 11.sp) },
-            leadingIcon = { Icon(Icons.Rounded.NoiseAware, null, modifier = Modifier.size(16.dp)) },
+            leadingIcon = { Icon(Icons.Rounded.CleaningServices, null, modifier = Modifier.size(16.dp)) },
             modifier = Modifier.weight(1f)
         )
     }
@@ -966,6 +967,7 @@ private fun TextToolPanel(
         ) {
             overlays.forEach { ov ->
                 InputChip(
+                    enabled = true,
                     selected = false,
                     onClick = { onRemoveText(ov.id) },
                     label = { Text(ov.text, fontSize = 11.sp, maxLines = 1) },
